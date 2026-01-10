@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 
-const API_BASE = 'http://10.0.0.139:8000'; // když se změní IP, upravíš jen tohle
+const API_BASE = 'http://10.0.0.139:8000';
 
 type Entry = {
   id?: number;
@@ -25,7 +25,6 @@ export default function HomeScreen() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Načtení záznamů po startu
   useEffect(() => {
     (async () => {
       try {
@@ -40,7 +39,6 @@ export default function HomeScreen() {
   }, []);
 
   const addMood = async () => {
-    console.log('Klik na ULOŽIT, mood =', mood);
     const n = Number(mood);
 
     if (!Number.isFinite(n) || n < 1 || n > 10) {
@@ -79,15 +77,14 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Denní check-in nálady 🌤️</Text>
 
-        {/* FORM KARTA */}
         <View style={styles.card}>
           <Text style={styles.label}>Jak se cítíš (1–10)?</Text>
+
+          <Text style={styles.scaleHint}>1 = nejhůř, 10 = nejlíp</Text>
+
           <TextInput
             value={mood}
             onChangeText={setMood}
@@ -97,9 +94,7 @@ export default function HomeScreen() {
             style={styles.input}
           />
 
-          <Text style={[styles.label, { marginTop: 12 }]}>
-            Co se dnes stalo?
-          </Text>
+          <Text style={[styles.label, { marginTop: 12 }]}>Co se dnes stalo?</Text>
           <TextInput
             value={note}
             onChangeText={setNote}
@@ -110,13 +105,10 @@ export default function HomeScreen() {
           />
 
           <TouchableOpacity style={styles.btn} onPress={addMood} disabled={loading}>
-            <Text style={styles.btnText}>
-              {loading ? 'Ukládám…' : 'ULOŽIT'}
-            </Text>
+            <Text style={styles.btnText}>{loading ? 'Ukládám…' : 'ULOŽIT'}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* SEZNAM ZÁZNAMŮ */}
         {entries.length > 0 && (
           <View style={styles.listWrapper}>
             <Text style={styles.sectionTitle}>Poslední záznamy</Text>
@@ -130,9 +122,7 @@ export default function HomeScreen() {
                   </Text>
                 </View>
 
-                {e.note ? (
-                  <Text style={styles.noteText}>✏️ {e.note}</Text>
-                ) : null}
+                {e.note ? <Text style={styles.noteText}>✏️ {e.note}</Text> : null}
               </View>
             ))}
           </View>
@@ -178,6 +168,13 @@ const styles = StyleSheet.create({
     color: '#222',
     marginBottom: 4,
   },
+
+  scaleHint: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 6,
+  },
+
   input: {
     borderWidth: 1,
     borderColor: '#ddd',

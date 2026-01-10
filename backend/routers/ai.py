@@ -7,7 +7,7 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 
 
 # -------------------------
-# 1) PŮVODNÍ ENDPOINT – ZACHOVÁNO
+# 1) Sumarizace
 # -------------------------
 @router.post("/summarize")
 async def summarize(req: dict):
@@ -16,7 +16,7 @@ async def summarize(req: dict):
 
 
 # -------------------------
-# 2) NOVÝ ENDPOINT – CHAT
+# 2) Chat
 # -------------------------
 @router.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(req: ChatRequest):

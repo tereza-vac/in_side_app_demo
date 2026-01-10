@@ -1,15 +1,60 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Animated,
+} from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export const FloatingTabBar: React.FC<BottomTabBarProps> = ({
+interface FloatingProps extends BottomTabBarProps {
+  hidden?: boolean; // 🔥 nový prop
+}
+
+export const FloatingTabBar: React.FC<FloatingProps> = ({
   state,
   descriptors,
   navigation,
+  hidden,
 }) => {
+  const insets = useSafeAreaInsets();
+
+  const opacity = React.useRef(new Animated.Value(1)).current;
+  const translateY = React.useRef(new Animated.Value(0)).current;
+
+  // animace hide/show
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: hidden ? 0 : 1,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: hidden ? 50 : 0, // posun mimo obraz při psaní
+        duration: 180,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [hidden]);
+
+  if (Platform.OS === "web") return null;
+
   return (
-    <View style={styles.wrapper}>
+    <Animated.View
+      style={[
+        styles.wrapper,
+        {
+          paddingBottom: insets.bottom + 6,
+          opacity,
+          transform: [{ translateY }],
+        },
+      ]}
+    >
       <View style={styles.bar}>
         {state.routes.map((route, index) => {
           const isFocused = state.index === index;
@@ -26,8 +71,7 @@ export const FloatingTabBar: React.FC<BottomTabBarProps> = ({
             }
           };
 
-          // ikony podle názvu routy
-          const iconMap: any = {
+          const iconMap: Record<string, string> = {
             index: "home",
             stats: "bar-chart",
             chat: "chatbubble-ellipses",
@@ -35,11 +79,7 @@ export const FloatingTabBar: React.FC<BottomTabBarProps> = ({
           };
 
           return (
-            <TouchableOpacity
-              key={route.key}
-              onPress={onPress}
-              style={styles.item}
-            >
+            <TouchableOpacity key={route.key} onPress={onPress} style={styles.item}>
               <Ionicons
                 name={iconMap[route.name] || "ellipse"}
                 size={26}
@@ -57,29 +97,30 @@ export const FloatingTabBar: React.FC<BottomTabBarProps> = ({
           );
         })}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",
-    bottom: 20,
     left: 0,
     right: 0,
+    bottom: 0,
     alignItems: "center",
+    zIndex: 20,
   },
   bar: {
     flexDirection: "row",
     backgroundColor: "#111",
-    paddingVertical: 12,
-    paddingHorizontal: 25,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
     borderRadius: 30,
-    elevation: 10,
+    elevation: 12,
     shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
   item: {
     flex: 1,

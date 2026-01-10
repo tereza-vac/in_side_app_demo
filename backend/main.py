@@ -4,6 +4,7 @@ from typing import List
 from sqlmodel import Session, select
 from datetime import datetime, timedelta
 from sqlalchemy import func
+from routers.stats import router as stats_router
 
 from database import init_db, get_session
 from models import (
@@ -136,6 +137,7 @@ def count_entries(days: int = 7, session: Session = Depends(get_session)):
     ).one()
     return CountOut(count=total or 0)
 
+app.include_router(stats_router)
 
 # ======================================================
 # ===============        AI ROUTER       ===============
