@@ -15,6 +15,18 @@ The project is built as a full-stack application with a FastAPI backend and an E
 - Unit-tested business logic
 - Docker support for local development
 
+## Preview
+
+<p align="center">
+  <img src="docs/images/daily_check-in.png" alt="Daily mood check-in" width="350" />
+  <img src="docs/images/chat.png" alt="AI chat" width="350" />
+</p>
+
+<p align="center">
+  <em>Daily mood check-in and AI-assisted reflection</em>
+</p>
+
+
 ## Architecture
 
 ### Backend (FastAPI)
